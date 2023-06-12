@@ -1,9 +1,11 @@
 import {Request, Response, Router} from "express";
 import {productRepository} from "../repositories/products-repository";
+import {body} from "express-validator";
+import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 
 export const productsRouter = Router()
 
-
+const titleValidation = body('title').trim().isLength({min: 3, max: 10}).withMessage('Title should be from 3 to 10 symbols')
 
 // GET
 productsRouter.get('/', (req: Request, res: Response) => {
@@ -28,13 +30,21 @@ productsRouter.delete('/:id', (req: Request, res: Response) => {
 })
 
 // POST
-productsRouter.post('/', (req: Request, res: Response) => {
+productsRouter.post(
+    '/',
+    titleValidation,
+    inputValidationMiddleware,
+    (req: Request, res: Response) => {
     const newProduct = productRepository.createProduct(req.body.title)
     res.status(201).send(newProduct)
 })
 
 //PUT
-productsRouter.put('/:id', (req: Request, res: Response) => {
+productsRouter.put(
+    '/:id',
+    titleValidation,
+    inputValidationMiddleware,
+    (req: Request, res: Response) => {
     const updatedProduct = productRepository.updateProduct(+req.params.id, req.body.title)
     if (updatedProduct) {
         res.status(200).send(updatedProduct)
