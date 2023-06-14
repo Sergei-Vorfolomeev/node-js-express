@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {productRepository, ProductType} from "../repositories/products-repository";
+import {productRepository, ProductType} from "../repositories/products-db-repository";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 
@@ -16,7 +16,7 @@ productsRouter.get('/', async (req: Request, res: Response) => {
     res.send(foundProducts)
 })
 productsRouter.get(`/:id`, async (req: Request, res: Response) => {
-    const foundProduct: ProductType | undefined = await productRepository.findProductById(+req.params.id)
+    const foundProduct: ProductType | null = await productRepository.findProductById(+req.params.id)
     if (foundProduct) {
         res.send(foundProduct)
     } else res.send(400)

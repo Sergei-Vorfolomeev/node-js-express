@@ -20,8 +20,13 @@ export const productRepository = {
             return products
         }
     },
-    async findProductById (id: number): Promise<ProductType | undefined> {
-        return products.find(el => el.id === id)
+    async findProductById (id: number): Promise<ProductType | null> {
+        const foundProduct = products.find(el => el.id === id)
+        if (foundProduct) {
+            return foundProduct
+        } else {
+            return null
+        }
     },
     async deleteProduct (id: number): Promise<boolean> {
         const productIndex = products.findIndex(el => el.id === id)
