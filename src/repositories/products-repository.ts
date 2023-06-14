@@ -1,4 +1,9 @@
-const products = [
+export type ProductType = {
+    id: number
+    title: string
+}
+
+const products: ProductType[] = [
     {id: 0, title: 'tomato'},
     {id: 1, title: 'orange'},
     {id: 2, title: 'apple'},
@@ -8,17 +13,26 @@ const products = [
 ]
 
 export const productRepository = {
-    findProducts (searchItem: string | null | undefined) {
+    async findProducts (searchItem: string | null | undefined): Promise<ProductType[]> {
         if (searchItem) {
             return products.filter(el => el.title.indexOf(searchItem) > -1)
         } else {
             return products
         }
     },
-    findProductById (id: number) {
+    async findProductById (id: number): Promise<ProductType | undefined> {
         return products.find(el => el.id === id)
     },
-    createProduct (title: string) {
+    async deleteProduct (id: number): Promise<boolean> {
+        const productIndex = products.findIndex(el => el.id === id)
+        if (productIndex > -1) {
+            products.splice(productIndex, 1)
+            return true
+        } else {
+            return false
+        }
+    },
+    async createProduct (title: string): Promise<ProductType> {
         const newProduct = {
             id: +(new Date()),
             title: title
@@ -26,16 +40,7 @@ export const productRepository = {
         products.push(newProduct)
         return newProduct
     },
-    deleteProduct (id: number) {
-        const productIndex = products.findIndex(el => el.id === id)
-        if (productIndex > -1) {
-            products.splice(productIndex, 1)
-            return true
-        } else {
-            return null
-        }
-    },
-    updateProduct (id: number, title: string) {
+    async updateProduct (id: number, title: string): Promise<ProductType | null> {
         const foundProduct = products.find(el => el.id === id)
         if (foundProduct) {
             foundProduct.title = title
