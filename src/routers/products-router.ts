@@ -1,7 +1,8 @@
 import {Request, Response, Router} from "express";
-import {productRepository, ProductType} from "../repositories/products-db-repository";
+import {ProductType} from "../repositories/products-db-repository";
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
+import {productsService} from "../services/products-service";
 
 export const productsRouter = Router()
 
@@ -12,11 +13,11 @@ const titleValidation = body('title').trim().isLength({
 
 // GET
 productsRouter.get('/', async (req: Request, res: Response) => {
-    const foundProducts: ProductType[] = await productRepository.findProducts(req.query.title?.toString())
+    const foundProducts: ProductType[] = await productsService.findProducts(req.query.title?.toString())
     res.send(foundProducts)
 })
 productsRouter.get(`/:id`, async (req: Request, res: Response) => {
-    const foundProduct: ProductType | null = await productRepository.findProductById(+req.params.id)
+    const foundProduct: ProductType | null = await productsService.findProductById(+req.params.id)
     if (foundProduct) {
         res.send(foundProduct)
     } else res.send(400)
@@ -24,7 +25,7 @@ productsRouter.get(`/:id`, async (req: Request, res: Response) => {
 
 // DELETE
 productsRouter.delete('/:id', async (req: Request, res: Response) => {
-    const isDeleted: boolean = await productRepository.deleteProduct(+req.params.id)
+    const isDeleted: boolean = await productsService.deleteProduct(+req.params.id)
     if (isDeleted) {
         res.send(204)
     } else {
@@ -38,7 +39,7 @@ productsRouter.post(
     titleValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const newProduct: ProductType = await productRepository.createProduct(req.body.title)
+        const newProduct: ProductType = await productsService.createProduct(req.body.title)
         res.status(201).send(newProduct)
     })
 
@@ -48,7 +49,7 @@ productsRouter.put(
     titleValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const updatedProduct: ProductType | null = await productRepository.updateProduct(+req.params.id, req.body.title)
+        const updatedProduct: ProductType | null = await productsService.updateProduct(+req.params.id, req.body.title)
         if (updatedProduct) {
             res.status(200).send(updatedProduct)
         } else {

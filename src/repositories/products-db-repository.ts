@@ -5,7 +5,7 @@ export type ProductType = {
     title: string
 }
 
-export const productRepository = {
+export const productsRepository = {
     async findProducts (searchItem: string | null | undefined): Promise<ProductType[]> {
         let filter = {}
         if (searchItem) {
@@ -25,11 +25,7 @@ export const productRepository = {
         const result = await productsCollection.deleteOne({id})
         return result.deletedCount === 1
     },
-    async createProduct (title: string): Promise<ProductType> {
-        const newProduct = {
-            id: +(new Date()),
-            title: title
-        }
+    async createProduct (newProduct: ProductType): Promise<ProductType> {
         const result = await productsCollection.insertOne(newProduct)
         return newProduct
     },

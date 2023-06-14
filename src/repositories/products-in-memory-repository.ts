@@ -12,7 +12,7 @@ const products: ProductType[] = [
     {id: 5, title: 'blueberry'},
 ]
 
-export const productRepository = {
+export const productsRepository = {
     async findProducts (searchItem: string | null | undefined): Promise<ProductType[]> {
         if (searchItem) {
             return products.filter(el => el.title.indexOf(searchItem) > -1)
